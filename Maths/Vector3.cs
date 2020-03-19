@@ -376,4 +376,12 @@ namespace ioSS.Util.Maths.Geometry
                 $"({(object) x.ToString(format)}, {(object) y.ToString(format)}, {(object) z.ToString(format)})";
         }
     }
+
+    public static class Vector3Ext
+    {
+        public static Vector2 ToVec2(this Vector3 _vec)
+        {
+            return new Vector2(_vec.x, _vec.y);
+        }
+    }
 }

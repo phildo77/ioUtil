@@ -108,6 +108,20 @@ namespace ioSS.Util.Maths
         {
             return ((_v0.y - _v1.y) * (_v0.x - _v2.x)).ApproxEqual((_v0.y - _v2.y) * (_v0.x - _v1.x), _epsilon);
         }
+        
+        public static Vector2 Intersect(Vector2 _rayA, Vector2 _rayB, Vector2 _originA, Vector2 _originB)
+        {
+            var dx = _originB.x - _originA.x;
+            var dy = _originB.y - _originA.y;
+            var det = _rayB.x * _rayA.y - _rayB.y * _rayA.x;
+            if (det == 0)
+                return Vector2.positiveInfinity;
+            var u = (dy * _rayB.x - dx * _rayB.y) / det;
+            var v = (dy * _rayA.x - dx * _rayA.y) / det;
+            if (u < 0 || v < 0)
+                return Vector2.positiveInfinity;
+            return new Vector2(_originA.x + _rayA.x * u, _originA.y + _rayA.y * u);
+        }
 
         //Don't have to worry about inf or close to zero cases
         public static bool ApproxEqual(this float _a, float _b, float _epsilon)
