@@ -109,7 +109,7 @@ namespace ioSS.Util.Maths
             return ((_v0.y - _v1.y) * (_v0.x - _v2.x)).ApproxEqual((_v0.y - _v2.y) * (_v0.x - _v1.x), _epsilon);
         }
         
-        public static Vector2 Intersect(Vector2 _rayA, Vector2 _rayB, Vector2 _originA, Vector2 _originB)
+        public static Vector2 IntersectRays(Vector2 _rayA, Vector2 _rayB, Vector2 _originA, Vector2 _originB)
         {
             var dx = _originB.x - _originA.x;
             var dy = _originB.y - _originA.y;
@@ -122,11 +122,77 @@ namespace ioSS.Util.Maths
                 return Vector2.positiveInfinity;
             return new Vector2(_originA.x + _rayA.x * u, _originA.y + _rayA.y * u);
         }
+        
+        public static Vector2 Intersect(Vector2 _ptA1, Vector2 _ptA2, Vector2 _ptB1, Vector2 _ptB2) 
+        { 
+            // Line AB represented as a1x + b1y = c1 
+            double a1 = _ptA2.y - _ptA1.y; 
+            double b1 = _ptA1.x - _ptA2.x; 
+            double c1 = a1*(_ptA1.x) + b1*(_ptA1.y); 
+  
+            // Line CD represented as a2x + b2y = c2 
+            double a2 = _ptB2.y - _ptB1.y; 
+            double b2 = _ptB1.x - _ptB2.x; 
+            double c2 = a2*(_ptB1.x)+ b2*(_ptB1.y); 
+  
+            double determinant = a1*b2 - a2*b1; 
+  
+            if (determinant == 0) 
+            { 
+                // The lines are parallel. This is simplified 
+                // by returning a pair of FLT_MAX 
+                return Vector2.positiveInfinity; 
+            } 
+            double x = (b2*c1 - b1*c2)/determinant; 
+            double y = (a1*c2 - a2*c1)/determinant;
+            return new Vector2((float)x, (float)y);
+            
+        } 
 
+        public static void SplitTriangle(Vector2[] _triangle, out Vector2[] _topTri, out Vector2[] _botTri)
+        {
+            // See http://www.sunshine2k.de/coding/java/TriangleRasterization/TriangleRasterization.html
+            //Sort by y
+            var vertList = new List<Vector2>(_triangle);
+            vertList.Sort((_a, _b) => _a.y.CompareTo(_b.y)); //TODO confirm 0 is smallest
+        
+            //TODO see if flat already
+            //Split into two triangles with flats
+            var vLow = vertList[0];
+            var vMid = vertList[1];
+            var vHi = vertList[2];
+            
+            var v4 = Intersect(vHi, vLow, vMid, Vector2.right);
+
+            _topTri = new [] {vHi,v4,vMid};
+            _botTri = new [] {vMid,v4,vLow};
+        }
+        
+        public static bool PointInTriangle(Vector2 p, Vector3 p0, Vector3 p1, Vector3 p2)
+        {
+            var s = p0.y * p2.x - p0.x * p2.y + (p2.y - p0.y) * p.x + (p0.x - p2.x) * p.y;
+            var t = p0.x * p1.y - p0.y * p1.x + (p0.y - p1.y) * p.x + (p1.x - p0.x) * p.y;
+
+            if (s < 0 != t < 0)
+                return false;
+
+            var A = -p1.y * p2.x + p0.y * (p2.x - p1.x) + p0.x * (p1.y - p2.y) + p1.x * p2.y;
+            if (A < 0.0)
+            {
+                s = -s;
+                t = -t;
+                A = -A;
+            }
+
+            return s > 0 && t > 0 && s + t <= A;
+        }
+
+        
         //Don't have to worry about inf or close to zero cases
         public static bool ApproxEqual(this float _a, float _b, float _epsilon)
         {
             return Math.Abs(_a - _b) < _epsilon;
         }
+        
     }
 }
