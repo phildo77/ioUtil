@@ -53,6 +53,25 @@ namespace ioSS.Util.Maths
 
             return new Vector2(xSum / count, ySum / count);
         }
+        
+        public static Vector3 CentroidOfPoly(IEnumerable<Vector3> _pts)
+        {
+            var count = 0;
+            float xSum = 0;
+            float ySum = 0;
+            float zSum = 0;
+            foreach (var pt in _pts)
+            {
+                count++;
+                xSum += pt.x;
+                ySum += pt.y;
+                zSum += pt.z;
+            }
+
+            return new Vector3(xSum / count, ySum / count);
+        }
+        
+        
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
