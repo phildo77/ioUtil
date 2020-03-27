@@ -104,7 +104,7 @@ namespace ioSS.Util.Drawing
 
         public void PaintLine(Pixel _p1, Pixel _p2, Color _color)
         {
-            var pixels = StageLine(_p1, _p1);
+            var pixels = StageLine(_p1, _p2);
             Paint(pixels, _color);
         }
         
