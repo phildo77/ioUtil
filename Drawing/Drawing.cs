@@ -89,7 +89,7 @@ namespace ioSS.Util.Drawing
             return pixels;
         }
         
-        private static HashSet<Pixel> StageLine(Pixel _p1, Pixel _p2)
+        public static HashSet<Pixel> StageLine(Pixel _p1, Pixel _p2)
         {
             var pixels = new HashSet<Pixel>();
             var bh = new Bresenham(_p1, _p2);
@@ -99,17 +99,28 @@ namespace ioSS.Util.Drawing
             } while (bh.MoveNext());
 
             return pixels;
-        } 
-
-
-        public void Paint(int _x, int _y, Color _col)
-        {
-            Bitmap[_y * Width + _x] = _col;
         }
 
-        public void Paint(Pixel _pixel, Color _col)
+        public void PaintLine(Pixel _p1, Pixel _p2, Color _color)
         {
-            Paint(_pixel.x, _pixel.y, _col);
+            var pixels = StageLine(_p1, _p1);
+            Paint(pixels, _color);
+        }
+        
+        public void Paint(int _x, int _y, Color _color)
+        {
+            Bitmap[_y * Width + _x] = _color;
+        }
+
+        public void Paint(Pixel _pixel, Color _color)
+        {
+            Paint(_pixel.x, _pixel.y, _color);
+        }
+
+        public void Paint(IEnumerable<Pixel> _pixels, Color _color)
+        {
+            foreach (var pixel in _pixels)
+                Paint(pixel, _color);
         }
         
         public void BrushLine(Canvas.Pixel _p1, Canvas.Pixel _p2, Canvas.Brush _brush)
@@ -121,7 +132,7 @@ namespace ioSS.Util.Drawing
             } while (bh.MoveNext());
         }
 
-        private class Bresenham : IEnumerator<Pixel>
+        public class Bresenham : IEnumerator<Pixel>
         {
             public readonly Pixel P1, P2;
             private Pixel Cur;
