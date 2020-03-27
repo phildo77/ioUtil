@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using ioSS.Util.Maths.Geometry;
 
 namespace ioSS.Util.Drawing
@@ -109,6 +110,11 @@ namespace ioSS.Util.Drawing
         
         public void Paint(int _x, int _y, Color _color)
         {
+            if (_x < 0 || _x >= Width || _y < 0 || _y >= Height)
+            {
+                Trace.WriteLine("Canvas Paint out of range " + new Pixel(_x,_y));
+                return;
+            }
             Bitmap[_y * Width + _x] = _color;
         }
 
