@@ -68,7 +68,7 @@ namespace ioSS.Util.Maths
                 zSum += pt.z;
             }
 
-            return new Vector3(xSum / count, ySum / count);
+            return new Vector3(xSum / count, ySum / count, zSum / count);
         }
         
         
